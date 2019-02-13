@@ -1,0 +1,105 @@
+﻿
+@{
+    ViewBag.Title = "Face Detection";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div>
+    <div class="loadmore">
+        <div id="loaderMoreupl" style="display: none;">
+            <img src="~/Content/ng-loader.gif" /> Uploading, please wait....!
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <table style="width:100%">
+        <tr>
+            <th><h4>Select Query Id Card</h4></th>
+            <th><h4>Select Query Face</h4></th>
+        </tr>
+        <tr>
+            <td style="width:50%" valign="top">
+                <form novalidate name="f1">
+                    <input type="file" name="file" accept="image/*" onchange="ShowImagePreview(this)" required />
+                </form>
+                <div class="clearfix"></div>
+                <div class="loadmore">
+                    <div id="loaderMore" class="color-orange" style="display: none;">
+                        <img src="~/Content/ng-loader.gif" style="padding-right: 5px" />Preparing, detecting faces, please wait....!
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="facePreview_thumb_big" id="faceCanvas"></div>
+            </td>
+            <td style="width:50%" valign="top">
+                <form novalidate name="f1">
+                    <input type="file" name="file" accept="image/*" onchange="ShowImagePreview1(this)" required />
+                </form>
+                <div class="clearfix"></div>
+                <div class="loadmore">
+                    <div id="loaderMore1" class="color-orange" style="display: none;">
+                        <img src="~/Content/ng-loader.gif" style="padding-right: 5px" />Preparing, detecting faces, please wait....!
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+                <div class="facePreview_thumb_big" id="faceCanvas1"></div>
+            </td>
+        </tr>
+    </table><hr />
+    <table style="width:100%">
+        <tr>
+            <th><h4>Detection OCR Result</h4></th>
+            <th><h4>Detection Face Detect Result</h4></th>
+        </tr>
+        <tr>
+            <td style="width:50%" valign="top">
+                <div class="clearfix"></div>
+                <form style="width:90%">
+                    <fieldset>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">ชื่อ: </label>
+                            <div class="col-sm-5">
+                                <input style="width:100%" type="text" class="form-control" id="NameThai">
+                            </div>
+                            <div class="col-sm-5">
+                                <input style="width:100%" type="text" class="form-control" id="NameEng">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-5 col-form-label">เลขบัตรประจำตัวประชาชน: </label>
+                            <div class="col-sm-7">
+                                <input style="width:100%" type="text" class="form-control" id="CitizenId">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">เกิดวันที่: </label>
+                            <div class="col-sm-5">
+                                <input style="width:100%"  type="text" class="form-control" id="DOBThai">
+                            </div>
+                            <div class="col-sm-5">
+                                <input style="width:100%"  type="text" class="form-control" id="DOBEng">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">ศาสนา: </label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="Religion">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">ที่อยู่: </label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="Address" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </td>
+            <td style="width:50%" valign="top">
+                <div class="clearfix"></div>
+                <div id="wrapper"><div class="facePreview_thumb_small" /></div>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<script src="~/Scripts/Script.js"></script>
