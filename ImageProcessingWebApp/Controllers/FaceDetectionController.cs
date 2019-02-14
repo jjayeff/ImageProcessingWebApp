@@ -29,6 +29,8 @@ namespace ImageProcessingWebApp.Controllers
         private readonly IFaceServiceClient faceServiceClient = new FaceServiceClient(ServiceKey, APIKey);
         private static string directory = "../UploadedFiles";
         private static string UplImageName = string.Empty;
+        private static string personGroupId = "myfriends";
+        private static string FaceName = string.Empty;
         // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
         // | GET: FaceDetection/Index                                        |
         // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -55,14 +57,10 @@ namespace ImageProcessingWebApp.Controllers
                 foreach (var para in paragraphs)
                 {
                     var box = para.BoundingBox;
-                    //Console.WriteLine($"Bounding box: {string.Join(" / ", box.Vertices.Select(v => $"({v.X}, {v.Y})"))}");
                     var symbols = string.Join("", para.Words.SelectMany(w => w.Symbols).SelectMany(s => s.Text));
-                    //Console.WriteLine($"Paragraph: {symbols}");
                     lines.Add(symbols);
-                    //Console.WriteLine();
                 }
             }
-            //System.IO.File.WriteAllLines(result_path + "DetectDocumentText.txt", lines);
             return lines;
         }
         // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -161,6 +159,7 @@ namespace ImageProcessingWebApp.Controllers
             var FullImgPath = Server.MapPath(directory) + '/' + UplImageName as string;
             var QueryFaceImageUrl = directory + '/' + UplImageName;
             var OCRText = OCRImage(DetectDocumentText(FullImgPath));
+
             IdentifyResult[] results = { };
             if (UplImageName != "")
             {
@@ -181,7 +180,7 @@ namespace ImageProcessingWebApp.Controllers
                         DetectedResultsInText = string.Format("{0} face(s) has been detected!!", faces.Length);
                         Bitmap CroppedFace = null;
 
-                        string personGroupId = "myfriends";
+                        // Detect Identify face training
                         await faceServiceClient.TrainPersonGroupAsync(personGroupId);
                         TrainingStatus trainingStatus = null;
                         while (true)
@@ -196,6 +195,7 @@ namespace ImageProcessingWebApp.Controllers
                         }
                         results = await faceServiceClient.IdentifyAsync(personGroupId, faceIds);
                         int i = 0;
+
                         foreach (var face in faces)
                         {
                             //Create & Save Cropped Images
@@ -212,20 +212,32 @@ namespace ImageProcessingWebApp.Controllers
                             if (CroppedFace != null)
                                 ((IDisposable)CroppedFace).Dispose();
 
+                            // Detect Identify face training countinue
                             string confidence_name;
                             double confidence_value;
-                            if (results[i++].Candidates.Length == 0)
+                            using (var s = System.IO.File.OpenRead(croppedImgFullPath))
                             {
-                                confidence_name = "No one identified";
-                                confidence_value = 0;
-                            }
-                            else
-                            {
-                                var candidateId = results[i - 1].Candidates[0].PersonId;
-                                var confidence = results[i - 1].Candidates[0].Confidence;
-                                var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
-                                confidence_name = person.Name;
-                                confidence_value = confidence;
+                                if (results[i++].Candidates.Length == 0)
+                                {
+                                    confidence_name = "No one identified";
+                                    confidence_value = 0;
+                                    if (FaceName != "")
+                                    {
+                                        var friend = await faceServiceClient.CreatePersonAsync(personGroupId, FaceName);
+                                        // Detect faces in the image and add to Anna
+                                        await faceServiceClient.AddPersonFaceAsync(personGroupId, friend.PersonId, s);
+                                    }
+                                }
+                                else
+                                {
+                                    var candidateId = results[i - 1].Candidates[0].PersonId;
+                                    var confidence = results[i - 1].Candidates[0].Confidence;
+                                    var person = await faceServiceClient.GetPersonAsync(personGroupId, candidateId);
+                                    confidence_name = person.Name;
+                                    confidence_value = confidence;
+                                    // Detect faces in the image and add to Anna
+                                    //await faceServiceClient.AddPersonFaceAsync(personGroupId, candidateId, s);
+                                }
                             }
 
                             DetectedFaces.Add(new vmFace()
@@ -325,6 +337,7 @@ namespace ImageProcessingWebApp.Controllers
                         nameEng += " " + getBetween(value, "Lastname", "เกิด");
                     }
                 }
+                FaceName = nameEng;
 
                 // citizen id
                 foreach (var value in detext_document_text)

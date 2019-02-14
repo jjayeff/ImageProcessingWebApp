@@ -88,3 +88,29 @@ textarea {
             color: #222;
             list-style-type: square;
         }
+
+.facePreview_thumb_small1 {
+    display: block;
+    width: 100%;
+    max-height: 300px;
+    overflow-y: scroll;
+    padding: 0px;
+    margin: 0px;
+}
+
+    .facePreview_thumb_small1 img {
+        padding: 3px;
+        border: 1px solid #eee;
+        margin: 2px;
+    }
+
+    .facePreview_thumb_small1 ul {
+        margin-top: 10px;
+        margin-left: 25px;
+        padding: 0px;
+    }
+
+        .facePreview_thumb_small1 ul li {
+            color: #222;
+            list-style-type: square;
+        }
