@@ -33,7 +33,7 @@ function DetectFace(imageUploader, cshtml) {
         xhr.send(formdata);
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4 && xhr.status == 200) {
-                console.log(xhr.responseText)
+                //console.log(xhr.responseText)
                 $('#loaderMoreupl').hide();
                 $(cshtml.loaderMore_id).show();
                 $.ajax({

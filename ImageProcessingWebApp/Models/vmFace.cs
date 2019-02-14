@@ -286,6 +286,18 @@ namespace FaceAPI_MVC.Web.Models
             }
         }
 
+        public string Identify
+        {
+            get;
+            set;
+        }
+
+        public string Confidence
+        {
+            get;
+            set;
+        }
+
         #endregion Properties
 
     }
